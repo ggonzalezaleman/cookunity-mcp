@@ -63,13 +63,24 @@ Error Handling:
           lines.push(`## ${d.date} ${statusEmoji} ${d.status.toUpperCase()}`);
           if (d.cutoff) lines.push(`**Cutoff**: ${d.cutoff} (${d.cutoff_timezone ?? ""})`);
           lines.push(`**Editable**: ${d.can_edit ? "Yes" : "No"} | **Menu available**: ${d.menu_available ? "Yes" : "No"}`);
-          if (d.cart_count > 0) {
+
+          if (d.order) {
+            lines.push(`**Order** #${d.order.id} (${d.order.status ?? "unknown"}, $${d.order.grand_total.toFixed(2)}):`);
+            for (const item of d.order.items) {
+              lines.push(`  - ${item.name} x${item.quantity} — $${item.price.toFixed(2)} (${item.chef})`);
+            }
+          } else if (d.cart_count > 0) {
             lines.push(`**Cart** (${d.cart_count} items):`);
             for (const item of d.cart_items) {
               lines.push(`  - ${item.name} x${item.quantity} — $${item.price.toFixed(2)} (${item.chef})`);
             }
+          } else if (d.recommendation_count > 0) {
+            lines.push(`**CookUnity Picks** (${d.recommendation_count} meals — not yet confirmed):`);
+            for (const item of d.recommendation_items) {
+              lines.push(`  - ${item.name} x${item.quantity} (${item.chef})`);
+            }
           } else {
-            lines.push("**Cart**: Empty");
+            lines.push("**Meals**: None selected");
           }
           lines.push("");
         }

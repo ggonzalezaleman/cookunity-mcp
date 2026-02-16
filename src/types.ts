@@ -151,6 +151,51 @@ export interface Cutoff {
   userTimeZone: string;
 }
 
+export interface OrderItemPrice {
+  price: number;
+  originalPrice?: number;
+}
+
+export interface OrderItem {
+  qty: number;
+  product: {
+    id: string;
+    inventoryId: string;
+    name: string;
+    chef_firstname: string;
+    chef_lastname: string;
+    meat_type: string | null;
+    premium_special?: boolean;
+  };
+  price: OrderItemPrice;
+}
+
+export interface OrderStatus {
+  state: string | null;
+  status: string | null;
+}
+
+export interface OrderInfo {
+  id: string;
+  grandTotal: number;
+  orderStatus: OrderStatus | null;
+  items: OrderItem[];
+}
+
+export interface RecommendationMeal {
+  name: string;
+  inventoryId: string;
+  chef_firstname: string;
+  chef_lastname: string;
+  meat_type: string | null;
+  qty: number;
+  premium_special?: boolean;
+}
+
+export interface Recommendation {
+  meals: RecommendationMeal[];
+}
+
 export interface UpcomingDay {
   id: string;
   date: string;
@@ -162,6 +207,8 @@ export interface UpcomingDay {
   isPaused: boolean;
   cutoff: Cutoff | null;
   cart: CartEntry[];
+  order: OrderInfo | null;
+  recommendation: Recommendation | null;
 }
 
 export interface CartItem {
@@ -200,6 +247,14 @@ export interface FormattedMeal {
   meat_type: string;
 }
 
+export interface DeliveryMealInfo {
+  name: string;
+  inventory_id: string;
+  quantity: number;
+  price: number;
+  chef: string;
+}
+
 export interface DeliveryInfo {
   date: string;
   status: "locked" | "active" | "skipped" | "paused";
@@ -207,14 +262,17 @@ export interface DeliveryInfo {
   menu_available: boolean;
   cutoff: string | null;
   cutoff_timezone: string | null;
-  cart_items: {
-    name: string;
-    inventory_id: string;
-    quantity: number;
-    price: number;
-    chef: string;
-  }[];
+  cart_items: DeliveryMealInfo[];
   cart_count: number;
+  order: {
+    id: string;
+    status: string | null;
+    grand_total: number;
+    items: DeliveryMealInfo[];
+    item_count: number;
+  } | null;
+  recommendation_items: DeliveryMealInfo[];
+  recommendation_count: number;
 }
 
 export interface MealInput {

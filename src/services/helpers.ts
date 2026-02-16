@@ -45,6 +45,40 @@ export function formatDelivery(day: UpcomingDay): DeliveryInfo {
       : day.isPaused
         ? "paused"
         : "active";
+
+  const cartItems = (day.cart || []).map((c) => ({
+    name: c.product?.name ?? "Unknown",
+    inventory_id: c.product?.inventoryId ?? "",
+    quantity: c.qty,
+    price: c.product?.price_incl_tax ?? 0,
+    chef: `${c.product?.chef_firstname ?? ""} ${c.product?.chef_lastname ?? ""}`.trim(),
+  }));
+
+  const orderInfo = day.order && day.order.items?.length > 0
+    ? {
+        id: day.order.id,
+        status: day.order.orderStatus?.status ?? null,
+        grand_total: day.order.grandTotal ?? 0,
+        items: day.order.items.map((item) => ({
+          name: item.product?.name ?? "Unknown",
+          inventory_id: item.product?.inventoryId ?? "",
+          quantity: item.qty,
+          price: item.price?.price ?? 0,
+          chef: `${item.product?.chef_firstname ?? ""} ${item.product?.chef_lastname ?? ""}`.trim(),
+        })),
+        item_count: day.order.items.reduce((sum, i) => sum + (i.qty || 0), 0),
+      }
+    : null;
+
+  const recMeals = day.recommendation?.meals || [];
+  const recommendationItems = recMeals.map((m) => ({
+    name: m.name ?? "Unknown",
+    inventory_id: m.inventoryId ?? "",
+    quantity: m.qty ?? 1,
+    price: 0,
+    chef: `${m.chef_firstname ?? ""} ${m.chef_lastname ?? ""}`.trim(),
+  }));
+
   return {
     date: day.displayDate,
     status,
@@ -52,14 +86,11 @@ export function formatDelivery(day: UpcomingDay): DeliveryInfo {
     menu_available: day.menuAvailable,
     cutoff: day.cutoff?.time ?? null,
     cutoff_timezone: day.cutoff?.userTimeZone ?? null,
-    cart_items: (day.cart || []).map((c) => ({
-      name: c.product?.name ?? "Unknown",
-      inventory_id: c.product?.inventoryId ?? "",
-      quantity: c.qty,
-      price: c.product?.price_incl_tax ?? 0,
-      chef: `${c.product?.chef_firstname ?? ""} ${c.product?.chef_lastname ?? ""}`.trim(),
-    })),
-    cart_count: (day.cart || []).reduce((sum, c) => sum + (c.qty || 0), 0),
+    cart_items: cartItems,
+    cart_count: cartItems.reduce((sum, c) => sum + (c.quantity || 0), 0),
+    order: orderInfo,
+    recommendation_items: recommendationItems,
+    recommendation_count: recommendationItems.reduce((sum, r) => sum + (r.quantity || 0), 0),
   };
 }
 

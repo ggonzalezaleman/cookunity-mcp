@@ -97,6 +97,18 @@ export class CookUnityAPI {
             }
             qty
           }
+          recommendation {
+            meals { name inventoryId chef_firstname chef_lastname meat_type qty premium_special }
+          }
+          order {
+            id grandTotal
+            orderStatus { state status }
+            items {
+              qty
+              product { id inventoryId name chef_firstname chef_lastname meat_type premium_special }
+              price { price originalPrice }
+            }
+          }
         }
       }
     `;
