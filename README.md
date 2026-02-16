@@ -6,37 +6,37 @@ MCP server for [CookUnity](https://www.cookunity.com) meal delivery service. Bro
 
 ### Menu & Discovery
 
-| Tool | Description | Read-only |
-|------|-------------|-----------|
-| `cookunity_get_menu` | Browse meals with filters (category, diet, price, rating) & pagination | ✅ |
-| `cookunity_search_meals` | Search by keyword across name, description, cuisine, chef, ingredients, diet tags | ✅ |
-| `cookunity_get_meal_details` | Full nutritional info, allergens, and ingredients for a specific meal | ✅ |
+| Tool | Description |
+|------|-------------|
+| `cookunity_get_menu` | Browse meals with filters (category, diet, price, rating) & pagination |
+| `cookunity_search_meals` | Search by keyword across name, description, cuisine, chef, ingredients, diet tags |
+| `cookunity_get_meal_details` | Full nutritional info, allergens, and ingredients for a specific meal |
 
 ### Cart & Orders
 
-| Tool | Description | Read-only |
-|------|-------------|-----------|
-| `cookunity_get_cart` | Cart contents for a specific delivery date | ✅ |
-| `cookunity_add_to_cart` | Add meal to cart by inventory_id and date | ❌ |
-| `cookunity_remove_from_cart` | Remove meal from cart by inventory_id | ❌ |
-| `cookunity_clear_cart` | Clear all cart items for a delivery date | ❌ |
-| `cookunity_confirm_order` | **Confirm/place order** — locks in cart items for delivery | ❌ |
+| Tool | Description |
+|------|-------------|
+| `cookunity_get_cart` | View cart contents for a specific delivery date |
+| `cookunity_add_to_cart` | Add meal to cart by inventory_id and date |
+| `cookunity_remove_from_cart` | Remove meal from cart by inventory_id |
+| `cookunity_clear_cart` | Clear all cart items for a delivery date |
+| `cookunity_confirm_order` | **Confirm/place order** — locks in cart items for delivery |
 
 ### Deliveries & Scheduling
 
-| Tool | Description | Read-only |
-|------|-------------|-----------|
-| `cookunity_list_deliveries` | Upcoming weeks with status, carts, cutoffs, skip state | ✅ |
-| `cookunity_skip_delivery` | Skip a delivery week | ❌ |
-| `cookunity_unskip_delivery` | Unskip a previously skipped week | ❌ |
+| Tool | Description |
+|------|-------------|
+| `cookunity_list_deliveries` | Upcoming weeks with status, carts, cutoffs, skip state |
+| `cookunity_skip_delivery` | Skip a delivery week |
+| `cookunity_unskip_delivery` | Unskip a previously skipped week |
 
 ### Account & Pricing
 
-| Tool | Description | Read-only |
-|------|-------------|-----------|
-| `cookunity_get_user_info` | User profile, plan, delivery days, addresses, credits | ✅ |
-| `cookunity_list_orders` | Order history with pagination | ✅ |
-| `cookunity_get_price_breakdown` | Price estimate with taxes, fees, credits, and promo discounts | ✅ |
+| Tool | Description |
+|------|-------------|
+| `cookunity_get_user_info` | User profile, plan, delivery days, addresses, credits |
+| `cookunity_list_orders` | Order history with pagination |
+| `cookunity_get_price_breakdown` | Price estimate with taxes, fees, credits, and promo discounts |
 
 ## Typical Workflow
 
