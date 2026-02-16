@@ -2,7 +2,7 @@
 
 MCP server for [CookUnity](https://www.cookunity.com) meal delivery service. Browse menus, manage carts, confirm orders, skip/unskip deliveries, and view order history.
 
-## Tools (14)
+## Tools (15)
 
 ### Menu & Discovery
 
@@ -26,7 +26,8 @@ MCP server for [CookUnity](https://www.cookunity.com) meal delivery service. Bro
 
 | Tool | Description |
 |------|-------------|
-| `cookunity_list_deliveries` | Upcoming weeks with status, carts, cutoffs, skip state |
+| `cookunity_next_delivery` | **Get nearest delivery** with meals (order, cart, or auto-picks) — use for "what's my next delivery?" |
+| `cookunity_list_deliveries` | All upcoming weeks with status, meals, cutoffs, skip state |
 | `cookunity_skip_delivery` | Skip a delivery week |
 | `cookunity_unskip_delivery` | Unskip a previously skipped week |
 

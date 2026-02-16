@@ -5,12 +5,14 @@ import {
   GetCartSchema,
   SkipDeliverySchema,
   UnskipDeliverySchema,
+  NextDeliverySchema,
 } from "../schemas/index.js";
 import type {
   ListDeliveriesInput,
   GetCartInput,
   SkipDeliveryInput,
   UnskipDeliveryInput,
+  NextDeliveryInput,
 } from "../schemas/index.js";
 import { ResponseFormat } from "../constants.js";
 import { getNextMonday, formatDelivery, handleError, toStructured } from "../services/helpers.js";
@@ -236,6 +238,97 @@ Error Handling:
         }
         const output = { success: true, date: params.date, message: `Delivery for ${params.date} has been unskipped.` };
         return { content: [{ type: "text", text: output.message }], structuredContent: toStructured(output) };
+      } catch (error) {
+        return handleError(error);
+      }
+    }
+  );
+
+  server.registerTool(
+    "cookunity_next_delivery",
+    {
+      title: "Get Next CookUnity Delivery",
+      description: `Get the nearest upcoming delivery with full details — including today's delivery if it hasn't been delivered yet.
+
+This is the recommended tool when the user asks about "my next delivery", "upcoming meals", "what's coming", etc. It returns the closest scheduled (non-skipped) delivery with its confirmed order items, cart items, or CookUnity auto-picks.
+
+IMPORTANT: "Next delivery" includes TODAY's delivery date. A delivery on today's date is still the "next" one unless it's already marked as completed/delivered.
+
+Args:
+  - response_format ('markdown'|'json')
+
+Returns: The nearest delivery with date, status, meals (from order, cart, or recommendations), and cutoff info.`,
+      inputSchema: NextDeliverySchema,
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: true,
+      },
+    },
+    async (params: NextDeliveryInput) => {
+      try {
+        const days = await api.getUpcomingDays();
+        const today = new Date().toISOString().split("T")[0];
+
+        // Find the nearest scheduled, non-skipped delivery (including today)
+        const next = days
+          .filter((d) => d.scheduled && !d.skip && d.date >= today)
+          .sort((a, b) => a.date.localeCompare(b.date))[0];
+
+        if (!next) {
+          return { content: [{ type: "text", text: "No upcoming deliveries found. All scheduled deliveries may be skipped." }], isError: true };
+        }
+
+        const delivery = formatDelivery(next);
+        let mealSource: string;
+        let meals: { name: string; quantity: number; price: number; chef: string }[];
+
+        if (delivery.order) {
+          mealSource = `Confirmed order #${delivery.order.id} (${delivery.order.status ?? "unknown"})`;
+          meals = delivery.order.items;
+        } else if (delivery.cart_count > 0) {
+          mealSource = "Cart (NOT confirmed — will be replaced by CookUnity picks at cutoff)";
+          meals = delivery.cart_items;
+        } else if (delivery.recommendation_count > 0) {
+          mealSource = "CookUnity auto-picks (not confirmed by user)";
+          meals = delivery.recommendation_items;
+        } else {
+          mealSource = "No meals selected";
+          meals = [];
+        }
+
+        const output = {
+          date: delivery.date,
+          status: delivery.status,
+          can_edit: delivery.can_edit,
+          cutoff: delivery.cutoff,
+          cutoff_timezone: delivery.cutoff_timezone,
+          meal_source: mealSource,
+          meals,
+          total_meals: meals.reduce((s, m) => s + m.quantity, 0),
+          total_price: delivery.order?.grand_total ?? meals.reduce((s, m) => s + m.price * m.quantity, 0),
+        };
+
+        if (params.response_format === ResponseFormat.JSON) {
+          return { content: [{ type: "text", text: JSON.stringify(output, null, 2) }], structuredContent: toStructured(output) };
+        }
+
+        const lines = [`# Next Delivery: ${output.date}`, `**Status**: ${output.status} | **Editable**: ${output.can_edit ? "Yes" : "No"}`];
+        if (output.cutoff) lines.push(`**Cutoff**: ${output.cutoff} (${output.cutoff_timezone ?? ""})`);
+        lines.push(`**Source**: ${mealSource}`, "");
+        if (meals.length === 0) {
+          lines.push("No meals selected yet.");
+        } else {
+          for (const m of meals) {
+            const priceStr = m.price > 0 ? ` — $${m.price.toFixed(2)}` : "";
+            lines.push(`- **${m.name}** x${m.quantity}${priceStr} (${m.chef})`);
+          }
+          if (output.total_price > 0) {
+            lines.push("", `**Total**: ${output.total_meals} meals, $${output.total_price.toFixed(2)}`);
+          }
+        }
+        return { content: [{ type: "text", text: lines.join("\n") }], structuredContent: toStructured(output) };
       } catch (error) {
         return handleError(error);
       }

@@ -112,5 +112,10 @@ export const ConfirmOrderSchema = z.object({
   tip: z.number().min(0).optional().describe("Tip amount in dollars"),
 }).strict();
 
+export const NextDeliverySchema = z.object({
+  response_format: ResponseFormatSchema,
+}).strict();
+
 export type GetMealDetailsInput = z.infer<typeof GetMealDetailsSchema>;
 export type ConfirmOrderInput = z.infer<typeof ConfirmOrderSchema>;
+export type NextDeliveryInput = z.infer<typeof NextDeliverySchema>;
