@@ -153,14 +153,15 @@ Error Handling:
     "cookunity_skip_delivery",
     {
       title: "Skip CookUnity Delivery",
-      description: `Skip a delivery week. The week must be editable (not past cutoff).
+      description: `Skip a delivery week. IMPORTANT: Always call cookunity_list_deliveries first to get valid delivery dates — do NOT guess or calculate dates manually.
 
 Args:
-  - date (string, required): YYYY-MM-DD delivery date to skip
+  - date (string, required): YYYY-MM-DD delivery date to skip (must match an actual delivery date from cookunity_list_deliveries)
 
 Returns: Confirmation message with skip ID
 
 Error Handling:
+  - Invalid date: returns available delivery dates
   - Past cutoff: returns error suggesting checking cutoff with list_deliveries
   - Already skipped: returns API error`,
       inputSchema: SkipDeliverySchema,
@@ -173,6 +174,12 @@ Error Handling:
     },
     async (params: SkipDeliveryInput) => {
       try {
+        // Validate date against actual upcoming deliveries
+        const days = await api.getUpcomingDays();
+        const validDates = days.map((d) => d.date);
+        if (!validDates.includes(params.date)) {
+          return { content: [{ type: "text", text: `Error: "${params.date}" is not a valid delivery date. Available dates: ${validDates.join(", ")}. Use cookunity_list_deliveries to see your delivery calendar.` }], isError: true };
+        }
         const result = await api.skipDelivery(params.date);
         if (result.__typename === "OrderCreationError") {
           return { content: [{ type: "text", text: `Error: ${result.error ?? "Failed to skip delivery"}. Check cutoff with cookunity_list_deliveries.` }], isError: true };
@@ -189,14 +196,15 @@ Error Handling:
     "cookunity_unskip_delivery",
     {
       title: "Unskip CookUnity Delivery",
-      description: `Unskip a previously skipped delivery week.
+      description: `Unskip a previously skipped delivery week. IMPORTANT: Always call cookunity_list_deliveries first to get valid delivery dates — do NOT guess or calculate dates manually.
 
 Args:
-  - date (string, required): YYYY-MM-DD delivery date to unskip
+  - date (string, required): YYYY-MM-DD delivery date to unskip (must match an actual delivery date from cookunity_list_deliveries)
 
 Returns: Confirmation message
 
 Error Handling:
+  - Invalid date: returns available delivery dates
   - Week not skipped: returns API error`,
       inputSchema: UnskipDeliverySchema,
       annotations: {
@@ -208,6 +216,12 @@ Error Handling:
     },
     async (params: UnskipDeliveryInput) => {
       try {
+        // Validate date against actual upcoming deliveries
+        const days = await api.getUpcomingDays();
+        const validDates = days.map((d) => d.date);
+        if (!validDates.includes(params.date)) {
+          return { content: [{ type: "text", text: `Error: "${params.date}" is not a valid delivery date. Available dates: ${validDates.join(", ")}. Use cookunity_list_deliveries to see your delivery calendar.` }], isError: true };
+        }
         const result = await api.unskipDelivery(params.date);
         if (result.__typename === "OrderCreationError") {
           return { content: [{ type: "text", text: `Error: ${result.error ?? "Failed to unskip delivery"}.` }], isError: true };
