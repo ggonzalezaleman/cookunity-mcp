@@ -298,7 +298,7 @@ export class CookUnityAPI {
         body,
         {
           headers: {
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: accessToken,
             "Content-Type": "application/json",
             "User-Agent": "CookUnity-MCP/1.0.0",
           },

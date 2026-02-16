@@ -1,6 +1,6 @@
 {
   "name": "cookunity-mcp-server",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "MCP server for CookUnity meal delivery service — browse menus, manage carts, confirm orders, skip deliveries",
   "type": "module",
   "main": "dist/index.js",
@@ -39,12 +39,15 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.6.1",
     "axios": "^1.7.9",
+    "axios-cookiejar-support": "^6.0.5",
     "express": "^4.21.0",
+    "tough-cookie": "^6.0.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
     "@types/node": "^22.10.0",
+    "@types/tough-cookie": "^4.0.5",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2"
   }
