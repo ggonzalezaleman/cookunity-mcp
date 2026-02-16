@@ -22,12 +22,14 @@ export function registerDeliveryTools(server: McpServer, api: CookUnityAPI): voi
     "cookunity_list_deliveries",
     {
       title: "List Upcoming CookUnity Deliveries",
-      description: `List upcoming delivery weeks with status (locked/active/skipped/paused), cart contents, and cutoff deadlines. This is the primary tool for understanding the user's delivery calendar. Only shows Monday delivery days.
+      description: `List upcoming delivery weeks with full details: confirmed order items, cart contents, CookUnity auto-picks, skip/pause status, and cutoff deadlines.
+
+IMPORTANT: Always call this tool to get FRESH data before answering any question about delivery status, meals, or orders. NEVER rely on cached or previously returned data — the user may have made changes on the website or app between calls.
 
 Args:
   - response_format ('markdown'|'json')
 
-Returns (JSON): { deliveries[{ date, status, can_edit, menu_available, cutoff, cutoff_timezone, cart_items[], cart_count }] }
+Returns (JSON): { deliveries[{ date, status, can_edit, menu_available, cutoff, cutoff_timezone, cart_items[], cart_count, order, recommendation_items[] }] }
 
 Examples:
   - See upcoming weeks: {}
@@ -94,13 +96,15 @@ Error Handling:
     "cookunity_get_cart",
     {
       title: "Get CookUnity Cart",
-      description: `Get cart contents for a specific delivery date.
+      description: `Get cart contents for a specific delivery date. Always call fresh — NEVER use cached results.
 
 Args:
   - date (string, optional): YYYY-MM-DD. Defaults to next Monday.
   - response_format ('markdown'|'json')
 
 Returns (JSON): { date, can_edit, is_skipped, cutoff, items[{ name, inventory_id, quantity, price, chef }], total_items, total_price }
+
+Note: If the order is already confirmed, cart may be empty — use cookunity_list_deliveries or cookunity_next_delivery instead to see confirmed order items.
 
 Error Handling:
   - Returns "Date not found" if date is not in upcoming deliveries`,
@@ -252,7 +256,9 @@ Error Handling:
 
 This is the recommended tool when the user asks about "my next delivery", "upcoming meals", "what's coming", etc. It returns the closest scheduled (non-skipped) delivery with its confirmed order items, cart items, or CookUnity auto-picks.
 
-IMPORTANT: "Next delivery" includes TODAY's delivery date. A delivery on today's date is still the "next" one unless it's already marked as completed/delivered.
+IMPORTANT:
+- "Next delivery" includes TODAY's delivery date. A delivery on today's date is still the "next" one unless it's already marked as completed/delivered.
+- Always call this tool FRESH for every user question. NEVER use previously cached results — the user may have changed their order, skipped/unskipped, or edited their cart on the website between calls.
 
 Args:
   - response_format ('markdown'|'json')
