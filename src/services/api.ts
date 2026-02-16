@@ -160,7 +160,7 @@ export class CookUnityAPI {
     `;
     const data = await this.querySubscription(mutation, {
       skip: { date, deliveryDate: date },
-      origin: "WEB",
+      origin: "unsubscription",
     });
     return data.createSkip as SkipResult;
   }
@@ -177,7 +177,7 @@ export class CookUnityAPI {
     `;
     const data = await this.querySubscription(mutation, {
       unskip: { date, deliveryDate: date },
-      origin: "WEB",
+      origin: "unsubscription",
     });
     return data.createUnskip as SkipResult;
   }
