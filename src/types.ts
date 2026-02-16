@@ -205,6 +205,7 @@ export interface UpcomingDay {
   canEdit: boolean;
   skip: boolean;
   isPaused: boolean;
+  scheduled: boolean;
   cutoff: Cutoff | null;
   cart: CartEntry[];
   order: OrderInfo | null;

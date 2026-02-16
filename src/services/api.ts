@@ -86,33 +86,46 @@ export class CookUnityAPI {
 
   async getUpcomingDays(): Promise<UpcomingDay[]> {
     const query = `
-      query {
+      query upcomingDays {
         upcomingDays {
           id date displayDate available menuAvailable canEdit skip isPaused
-          cutoff { time userTimeZone }
+          scheduled
+          cutoff { time userTimeZone __typename }
           cart {
             product {
               id inventoryId name sku image_path price_incl_tax realPrice
               chef_firstname chef_lastname meat_type premium_special
+              __typename
             }
             qty
+            __typename
           }
           recommendation {
-            meals { name inventoryId chef_firstname chef_lastname meat_type qty premium_special }
+            meals {
+              name inventoryId chef_firstname chef_lastname meat_type qty premium_special
+              __typename
+            }
+            __typename
           }
           order {
             id grandTotal
-            orderStatus { state status }
+            orderStatus { state status __typename }
             items {
               qty
-              product { id inventoryId name chef_firstname chef_lastname meat_type premium_special }
-              price { price originalPrice }
+              product {
+                id inventoryId name chef_firstname chef_lastname meat_type premium_special
+                __typename
+              }
+              price { price originalPrice __typename }
+              __typename
             }
+            __typename
           }
+          __typename
         }
       }
     `;
-    const data = await this.querySubscription(query);
+    const data = await this.querySubscription(query, {}, "upcomingDays");
     return data.upcomingDays as UpcomingDay[];
   }
 
@@ -264,21 +277,25 @@ export class CookUnityAPI {
 
   private async querySubscription(
     query: string,
-    variables: Record<string, unknown> = {}
+    variables: Record<string, unknown> = {},
+    operationName?: string
   ): Promise<Record<string, unknown>> {
-    return this.executeGraphQL(SUBSCRIPTION_URL, query, variables);
+    return this.executeGraphQL(SUBSCRIPTION_URL, query, variables, operationName);
   }
 
   private async executeGraphQL(
     endpoint: string,
     query: string,
-    variables: Record<string, unknown> = {}
+    variables: Record<string, unknown> = {},
+    operationName?: string
   ): Promise<Record<string, unknown>> {
     const accessToken = await this.auth.getAccessToken();
     try {
+      const body: Record<string, unknown> = { query, variables };
+      if (operationName) body.operationName = operationName;
       const response = await axios.post(
         endpoint,
-        { query, variables },
+        body,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -288,11 +305,11 @@ export class CookUnityAPI {
           timeout: 30000,
         }
       );
-      const body = response.data as { data?: Record<string, unknown>; errors?: Array<{ message: string }> };
-      if (body.errors) {
-        throw new Error(`GraphQL errors: ${body.errors.map((e) => e.message).join(", ")}`);
+      const result = response.data as { data?: Record<string, unknown>; errors?: Array<{ message: string }> };
+      if (result.errors) {
+        throw new Error(`GraphQL errors: ${result.errors.map((e: { message: string }) => e.message).join(", ")}`);
       }
-      return body.data!;
+      return result.data!;
     } catch (error) {
       if (error instanceof AxiosError) {
         const status = error.response?.status;

@@ -44,12 +44,9 @@ Error Handling:
     async (params: ListDeliveriesInput) => {
       try {
         const days = await api.getUpcomingDays();
-        // Filter to Mondays only
-        const mondays = days.filter((d) => {
-          const dt = new Date(d.date + "T00:00:00Z");
-          return dt.getUTCDay() === 1;
-        });
-        const deliveries = mondays.map(formatDelivery);
+        // Filter to scheduled delivery days only
+        const scheduledDays = days.filter((d) => d.scheduled);
+        const deliveries = scheduledDays.map(formatDelivery);
 
         const output = { total: deliveries.length, deliveries };
 
