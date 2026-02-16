@@ -1,0 +1,107 @@
+import type { Meal, FormattedMeal, UpcomingDay, DeliveryInfo } from "../types.js";
+import { CHARACTER_LIMIT } from "../constants.js";
+
+export function getNextMonday(): string {
+  const today = new Date();
+  const dayOfWeek = today.getDay();
+  const daysUntilMonday = dayOfWeek === 0 ? 1 : 8 - dayOfWeek;
+  const nextMonday = new Date(today);
+  nextMonday.setDate(today.getDate() + daysUntilMonday);
+  return nextMonday.toISOString().split("T")[0];
+}
+
+export function formatMeal(meal: Meal): FormattedMeal {
+  return {
+    id: meal.id,
+    name: meal.name,
+    description: meal.shortDescription,
+    chef: `${meal.chef.firstName} ${meal.chef.lastName}`,
+    category: meal.category.title,
+    price: meal.finalPrice,
+    original_price: meal.price,
+    rating: meal.userRating,
+    inventory_id: meal.inventoryId,
+    batch_id: meal.batchId,
+    in_stock: meal.stock > 0,
+    stock: meal.stock,
+    is_new: meal.isNewMeal,
+    image: meal.image,
+    nutrition: meal.nutritionalFacts,
+    tags: {
+      cuisines: meal.searchBy.cuisines,
+      diet_tags: meal.searchBy.dietTags,
+      protein_tags: meal.searchBy.proteinTags,
+      ingredients: meal.searchBy.ingredients,
+    },
+    meat_type: meal.meatType,
+  };
+}
+
+export function formatDelivery(day: UpcomingDay): DeliveryInfo {
+  const status = !day.canEdit
+    ? "locked"
+    : day.skip
+      ? "skipped"
+      : day.isPaused
+        ? "paused"
+        : "active";
+  return {
+    date: day.displayDate,
+    status,
+    can_edit: day.canEdit,
+    menu_available: day.menuAvailable,
+    cutoff: day.cutoff?.time ?? null,
+    cutoff_timezone: day.cutoff?.userTimeZone ?? null,
+    cart_items: (day.cart || []).map((c) => ({
+      name: c.product?.name ?? "Unknown",
+      inventory_id: c.product?.inventoryId ?? "",
+      quantity: c.qty,
+      price: c.product?.price_incl_tax ?? 0,
+      chef: `${c.product?.chef_firstname ?? ""} ${c.product?.chef_lastname ?? ""}`.trim(),
+    })),
+    cart_count: (day.cart || []).reduce((sum, c) => sum + (c.qty || 0), 0),
+  };
+}
+
+export function formatMealMarkdown(m: FormattedMeal): string {
+  const lines = [
+    `### ${m.name}${m.is_new ? " 🆕" : ""}`,
+    `**Chef**: ${m.chef} | **Category**: ${m.category}`,
+    `**Price**: $${m.price.toFixed(2)}${m.price !== m.original_price ? ` (was $${m.original_price.toFixed(2)})` : ""} | **Rating**: ${m.rating}/5`,
+    `**Stock**: ${m.in_stock ? m.stock : "Out of stock"} | **Inventory ID**: \`${m.inventory_id}\``,
+    m.description,
+    `🥩 ${m.meat_type} | ${m.nutrition.calories} cal`,
+  ];
+  if (m.tags.diet_tags.length > 0) lines.push(`🏷️ ${m.tags.diet_tags.join(", ")}`);
+  return lines.join("\n");
+}
+
+export function truncateIfNeeded<T>(items: T[], textContent: string): { items: T[]; truncated: boolean; message?: string } {
+  if (textContent.length <= CHARACTER_LIMIT) return { items, truncated: false };
+  const reduced = items.slice(0, Math.max(1, Math.floor(items.length / 2)));
+  return {
+    items: reduced,
+    truncated: true,
+    message: `Response truncated from ${items.length} to ${reduced.length} items. Use offset/limit or filters to see more.`,
+  };
+}
+
+// Type for tool call results compatible with MCP SDK
+interface ToolResult {
+  [x: string]: unknown;
+  content: Array<{ type: "text"; text: string }>;
+  structuredContent?: Record<string, unknown>;
+  isError?: boolean;
+}
+
+export function handleError(error: unknown): ToolResult {
+  const message = error instanceof Error ? error.message : String(error);
+  return {
+    content: [{ type: "text" as const, text: `Error: ${message}` }],
+    isError: true,
+  };
+}
+
+export function toStructured(obj: unknown): Record<string, unknown> {
+  return JSON.parse(JSON.stringify(obj)) as Record<string, unknown>;
+}

@@ -1,0 +1,12 @@
+{
+  "note": "Example Claude Desktop configuration",
+  "mcpServers": {
+    "cookunity": {
+      "command": "cookunity-mcp",
+      "env": {
+        "COOKUNITY_EMAIL": "your-email@example.com",
+        "COOKUNITY_PASSWORD": "your-password"
+      }
+    }
+  }
+}
