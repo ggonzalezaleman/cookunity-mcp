@@ -1,5 +1,7 @@
 # cookunity-mcp-server
 
+> ⚠️ **Unofficial.** This project is not affiliated with, endorsed by, or associated with CookUnity in any way. It was built by reverse-engineering their internal APIs for personal use.
+
 MCP server for [CookUnity](https://www.cookunity.com) meal delivery service. Browse menus, manage carts, confirm orders, skip/unskip deliveries, and view order history.
 
 ## Tools (15)
