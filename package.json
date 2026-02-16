@@ -1,12 +1,32 @@
 {
   "name": "cookunity-mcp-server",
   "version": "1.0.0",
-  "description": "MCP server for CookUnity meal delivery service",
+  "description": "MCP server for CookUnity meal delivery service — browse menus, manage carts, confirm orders, skip deliveries",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
     "cookunity-mcp-server": "dist/index.js"
   },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "cookunity",
+    "meal-delivery",
+    "model-context-protocol",
+    "ai",
+    "llm"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ggonzalezaleman/cookunity-mcp.git"
+  },
+  "license": "MIT",
+  "author": "Guille Gonzalez",
   "scripts": {
     "start": "node dist/index.js",
     "dev": "tsx watch src/index.ts",
