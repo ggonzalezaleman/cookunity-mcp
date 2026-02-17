@@ -12,6 +12,7 @@ import type {
   SkipResult,
   MealInput,
   PriceBreakdown,
+  Invoice,
 } from "../types.js";
 
 export class CookUnityAPI {
@@ -247,6 +248,46 @@ export class CookUnityAPI {
     `;
     const data = await this.querySubscription(query, { date, meals });
     return data.getOrderDetail as PriceBreakdown;
+  }
+
+  async getInvoices(from: string, to: string, offset: number = 0, limit: number = 10): Promise<Invoice[]> {
+    const query = `
+      query getInvoices($date: InvoicesInput!, $liteVersion: Boolean!, $offset: Int, $limit: Int) {
+        invoices(date: $date, liteVersion: $liteVersion, limit: $limit, offset: $offset) {
+          id customerId date customerName deliveryAddress
+          subtotal deliveryFee expressFee taxes tip discount chargedCredit total
+          ccNumber planId createdAt updatedAt
+          charges {
+            id chargeId status stripeId
+            refund { amount createdAt updatedAt __typename }
+            createdAt updatedAt __typename
+          }
+          orders {
+            id delivery_date display_date time_start time_end
+            items {
+              product {
+                id name sku short_description image calories category_id
+                sidedish chef_firstname chef_lastname meat_type stars user_rating
+                premium_special
+                review { id order product rating review reasons created_at __typename }
+                __typename
+              }
+              price { price originalPrice priceIncludingTax basePriceIncludingTax __typename }
+              qty __typename
+            }
+            __typename
+          }
+          __typename
+        }
+      }
+    `;
+    const data = await this.querySubscription(query, {
+      date: { from, to },
+      liteVersion: false,
+      offset,
+      limit,
+    });
+    return data.invoices as Invoice[];
   }
 
   async searchMeals(keyword: string, date: string): Promise<Meal[]> {

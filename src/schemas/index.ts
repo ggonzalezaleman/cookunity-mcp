@@ -117,5 +117,14 @@ export const NextDeliverySchema = z.object({
 }).strict();
 
 export type GetMealDetailsInput = z.infer<typeof GetMealDetailsSchema>;
+export const GetOrderHistorySchema = z.object({
+  from: z.string().regex(datePattern, "Date must be YYYY-MM-DD format").describe("Start date (inclusive) for invoice range, e.g. '2025-01-01'"),
+  to: z.string().regex(datePattern, "Date must be YYYY-MM-DD format").describe("End date (inclusive) for invoice range, e.g. '2025-12-31'"),
+  limit: z.number().int().min(1).max(50).default(10).describe("Number of invoices to return (max 50)"),
+  offset: z.number().int().min(0).default(0).describe("Pagination offset"),
+  response_format: ResponseFormatSchema,
+}).strict();
+
 export type ConfirmOrderInput = z.infer<typeof ConfirmOrderSchema>;
 export type NextDeliveryInput = z.infer<typeof NextDeliverySchema>;
+export type GetOrderHistoryInput = z.infer<typeof GetOrderHistorySchema>;

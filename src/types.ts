@@ -306,3 +306,83 @@ export interface PaginatedResponse<T> {
   has_more: boolean;
   next_offset?: number;
 }
+
+export interface InvoiceCharge {
+  id: string;
+  chargeId: string;
+  status: string;
+  stripeId: string;
+  refund: { amount: number; createdAt: string; updatedAt: string } | null;
+}
+
+export interface InvoiceOrderItemReview {
+  id: string;
+  order: string;
+  product: string;
+  rating: number;
+  review: string | null;
+  reasons: string | null;
+  created_at: string;
+}
+
+export interface InvoiceOrderItemProduct {
+  id: string;
+  name: string;
+  sku: string;
+  short_description: string;
+  image: string;
+  calories: string;
+  category_id: number;
+  sidedish: string;
+  chef_firstname: string;
+  chef_lastname: string;
+  meat_type: string | null;
+  stars: number | null;
+  user_rating: number | null;
+  premium_special: boolean | null;
+  review: InvoiceOrderItemReview | null;
+}
+
+export interface InvoiceOrderItemPrice {
+  price: number;
+  originalPrice: number | null;
+  priceIncludingTax: number;
+  basePriceIncludingTax: number;
+}
+
+export interface InvoiceOrderItem {
+  product: InvoiceOrderItemProduct;
+  price: InvoiceOrderItemPrice;
+  qty: number;
+}
+
+export interface InvoiceOrder {
+  id: string;
+  delivery_date: string;
+  display_date: string;
+  time_start: string;
+  time_end: string;
+  items: InvoiceOrderItem[];
+}
+
+export interface Invoice {
+  id: string;
+  customerId: string;
+  date: string;
+  customerName: string;
+  deliveryAddress: string;
+  subtotal: number;
+  deliveryFee: number;
+  expressFee: number;
+  taxes: number;
+  tip: number;
+  discount: number;
+  chargedCredit: number;
+  total: number;
+  ccNumber: string;
+  planId: number;
+  createdAt: string;
+  updatedAt: string;
+  charges: InvoiceCharge[];
+  orders: InvoiceOrder[];
+}
