@@ -1,8 +1,23 @@
 # cookunity-mcp-server
 
+[![npm version](https://img.shields.io/npm/v/cookunity-mcp-server.svg)](https://www.npmjs.com/package/cookunity-mcp-server)
+[![npm downloads](https://img.shields.io/npm/dm/cookunity-mcp-server.svg)](https://www.npmjs.com/package/cookunity-mcp-server)
+
 > ⚠️ **Unofficial.** This project is not affiliated with, endorsed by, or associated with CookUnity in any way. It was built by reverse-engineering their internal APIs for personal use.
 
 MCP server for [CookUnity](https://www.cookunity.com) meal delivery service. Browse menus, manage carts, confirm orders, skip/unskip deliveries, and view order history.
+
+## Installation
+
+```bash
+npm install -g cookunity-mcp-server
+```
+
+Or run directly with npx:
+
+```bash
+npx cookunity-mcp-server
+```
 
 ## Tools (15)
 
@@ -57,11 +72,6 @@ MCP server for [CookUnity](https://www.cookunity.com) meal delivery service. Bro
 
 ## Setup
 
-```bash
-npm install
-npm run build
-```
-
 ### Environment Variables
 
 | Variable | Required | Description |
@@ -73,14 +83,14 @@ npm run build
 
 ## Configuration
 
-### Claude Desktop / OpenClaw (stdio)
+### Claude Desktop / Cursor / OpenClaw (stdio)
 
 ```json
 {
   "mcpServers": {
     "cookunity": {
-      "command": "node",
-      "args": ["/path/to/cookunity-mcp/dist/index.js"],
+      "command": "npx",
+      "args": ["cookunity-mcp-server"],
       "env": {
         "COOKUNITY_EMAIL": "your@email.com",
         "COOKUNITY_PASSWORD": "your-password"
@@ -93,7 +103,17 @@ npm run build
 ### Streamable HTTP (remote)
 
 ```bash
-COOKUNITY_EMAIL=your@email.com COOKUNITY_PASSWORD=your-password TRANSPORT=http PORT=3000 node dist/index.js
+COOKUNITY_EMAIL=your@email.com COOKUNITY_PASSWORD=your-password TRANSPORT=http PORT=3000 npx cookunity-mcp-server
+```
+
+### From Source (development)
+
+```bash
+git clone https://github.com/ggonzalezaleman/cookunity-mcp.git
+cd cookunity-mcp
+npm install
+npm run build
+node dist/index.js
 ```
 
 ## API Details
