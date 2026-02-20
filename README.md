@@ -3,6 +3,10 @@
 [![npm version](https://img.shields.io/npm/v/cookunity-mcp-server.svg)](https://www.npmjs.com/package/cookunity-mcp-server)
 [![npm downloads](https://img.shields.io/npm/dm/cookunity-mcp-server.svg)](https://www.npmjs.com/package/cookunity-mcp-server)
 
+<a href="https://glama.ai/mcp/servers/@ggonzalezaleman/cook-unity-mcp">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@ggonzalezaleman/cook-unity-mcp/badge" />
+</a>
+
 > ⚠️ **Unofficial.** This project is not affiliated with, endorsed by, or associated with CookUnity in any way. It was built by reverse-engineering their internal APIs for personal use.
 
 MCP server for [CookUnity](https://www.cookunity.com) meal delivery service. Browse menus, manage carts, confirm orders, skip/unskip deliveries, and view order history.
