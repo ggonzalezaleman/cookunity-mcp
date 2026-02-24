@@ -135,7 +135,7 @@ export class CookUnityAPI {
     inventoryId: string,
     quantity: number = 1,
     batchId?: number
-  ): Promise<CartItem> {
+  ): Promise<{ added: CartItem; cart: CartItem[] }> {
     const mutation = `
       mutation addMeal($date: String!, $batch_id: Int, $quantity: Int!, $inventory_id: String) {
         addMeal(date: $date, batch_id: $batch_id, quantity: $quantity, inventory_id: $inventory_id) {
@@ -150,7 +150,10 @@ export class CookUnityAPI {
       quantity,
       inventory_id: inventoryId,
     });
-    return data.addMeal as CartItem;
+    // API returns the full cart as an array, not just the added item
+    const cart = data.addMeal as CartItem[];
+    const added = cart.find((item) => item.inventoryId === inventoryId) ?? { qty: quantity, inventoryId };
+    return { added, cart };
   }
 
   async removeMeal(date: string, inventoryId: string, quantity: number = 1): Promise<CartItem> {

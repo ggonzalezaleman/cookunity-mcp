@@ -1,6 +1,6 @@
 {
   "name": "cookunity-mcp-server",
-  "version": "1.3.3",
+  "version": "1.3.4",
   "description": "Unofficial MCP server for CookUnity meal delivery — browse menus, manage carts, confirm orders, skip deliveries. Not affiliated with CookUnity.",
   "type": "module",
   "main": "dist/index.js",

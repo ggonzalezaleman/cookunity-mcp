@@ -36,13 +36,14 @@ Error Handling:
     },
     async (params: AddToCartInput) => {
       try {
-        const result = await api.addMeal(params.date, params.inventory_id, params.quantity, params.batch_id);
+        const { added, cart } = await api.addMeal(params.date, params.inventory_id, params.quantity, params.batch_id);
         const output = {
           success: true,
           date: params.date,
-          inventory_id: result.inventoryId,
-          quantity: result.qty,
-          message: `Added ${params.quantity} portion(s) to cart for ${params.date}.`,
+          inventory_id: added.inventoryId,
+          quantity: added.qty,
+          cart_total_items: cart.reduce((sum, item) => sum + item.qty, 0),
+          message: `Added ${params.quantity} portion(s) to cart for ${params.date}. Cart now has ${cart.reduce((sum, item) => sum + item.qty, 0)} item(s).`,
         };
         return { content: [{ type: "text", text: output.message }], structuredContent: toStructured(output) };
       } catch (error) {
