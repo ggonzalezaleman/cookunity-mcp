@@ -300,10 +300,11 @@ export class CookUnityAPI {
       if (meal.name.toLowerCase().includes(term)) return true;
       if (meal.shortDescription.toLowerCase().includes(term)) return true;
       const s = meal.searchBy;
-      if (s.cuisines.some((c) => c.toLowerCase().includes(term))) return true;
-      if (s.dietTags.some((t) => t.toLowerCase().includes(term))) return true;
-      if (s.ingredients.some((i) => i.toLowerCase().includes(term))) return true;
-      if (s.proteinTags.some((p) => p.toLowerCase().includes(term))) return true;
+      const toArr = (v: unknown): string[] => Array.isArray(v) ? v as string[] : typeof v === "string" && v.length > 0 ? [v] : [];
+      if (toArr(s.cuisines).some((c) => c.toLowerCase().includes(term))) return true;
+      if (toArr(s.dietTags).some((t) => t.toLowerCase().includes(term))) return true;
+      if (toArr(s.ingredients).some((i) => i.toLowerCase().includes(term))) return true;
+      if (toArr(s.proteinTags).some((p) => p.toLowerCase().includes(term))) return true;
       if (`${s.chefFirstName} ${s.chefLastName}`.toLowerCase().includes(term)) return true;
       if (meal.category.title.toLowerCase().includes(term)) return true;
       return false;

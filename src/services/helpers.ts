@@ -10,6 +10,12 @@ export function getNextMonday(): string {
   return nextMonday.toISOString().split("T")[0];
 }
 
+function toArray(val: unknown): string[] {
+  if (Array.isArray(val)) return val as string[];
+  if (typeof val === "string" && val.length > 0) return [val];
+  return [];
+}
+
 export function formatMeal(meal: Meal): FormattedMeal {
   return {
     id: meal.id,
@@ -28,10 +34,10 @@ export function formatMeal(meal: Meal): FormattedMeal {
     image: meal.image,
     nutrition: meal.nutritionalFacts,
     tags: {
-      cuisines: meal.searchBy.cuisines,
-      diet_tags: meal.searchBy.dietTags,
-      protein_tags: meal.searchBy.proteinTags,
-      ingredients: meal.searchBy.ingredients,
+      cuisines: toArray(meal.searchBy.cuisines),
+      diet_tags: toArray(meal.searchBy.dietTags),
+      protein_tags: toArray(meal.searchBy.proteinTags),
+      ingredients: toArray(meal.searchBy.ingredients),
     },
     meat_type: meal.meatType,
   };

@@ -17,18 +17,18 @@ export const GetMenuSchema = z.object({
   date: DateSchema.optional(),
   category: z.string().optional().describe("Filter by category title (e.g. 'Bowls', 'Protein+')"),
   diet: z.string().optional().describe("Filter by diet tag (e.g. 'gluten-free', 'vegan', 'dairy-free')"),
-  max_price: z.number().min(0).optional().describe("Maximum price filter in dollars"),
-  min_rating: z.number().min(0).max(5).optional().describe("Minimum rating filter (0-5)"),
-  limit: z.number().int().min(1).max(MAX_PAGE_SIZE).default(DEFAULT_PAGE_SIZE).describe("Results per page (max 50)"),
-  offset: z.number().int().min(0).default(0).describe("Number of results to skip for pagination"),
+  max_price: z.coerce.number().min(0).optional().describe("Maximum price filter in dollars"),
+  min_rating: z.coerce.number().min(0).max(5).optional().describe("Minimum rating filter (0-5)"),
+  limit: z.coerce.number().int().min(1).max(MAX_PAGE_SIZE).default(DEFAULT_PAGE_SIZE).describe("Results per page (max 50)"),
+  offset: z.coerce.number().int().min(0).default(0).describe("Number of results to skip for pagination"),
   response_format: ResponseFormatSchema,
 }).strict();
 
 export const SearchMealsSchema = z.object({
   query: z.string().min(1, "Search query is required").max(200).describe("Keyword to search across meal name, description, cuisine, chef, ingredients, diet tags"),
   date: DateSchema.optional(),
-  limit: z.number().int().min(1).max(MAX_PAGE_SIZE).default(DEFAULT_PAGE_SIZE).describe("Results per page"),
-  offset: z.number().int().min(0).default(0).describe("Pagination offset"),
+  limit: z.coerce.number().int().min(1).max(MAX_PAGE_SIZE).default(DEFAULT_PAGE_SIZE).describe("Results per page"),
+  offset: z.coerce.number().int().min(0).default(0).describe("Pagination offset"),
   response_format: ResponseFormatSchema,
 }).strict();
 
@@ -37,8 +37,8 @@ export const GetUserInfoSchema = z.object({
 }).strict();
 
 export const ListOrdersSchema = z.object({
-  limit: z.number().int().min(1).max(100).default(20).describe("Number of orders to return"),
-  offset: z.number().int().min(0).default(0).describe("Pagination offset"),
+  limit: z.coerce.number().int().min(1).max(100).default(20).describe("Number of orders to return"),
+  offset: z.coerce.number().int().min(0).default(0).describe("Pagination offset"),
   response_format: ResponseFormatSchema,
 }).strict();
 
@@ -120,8 +120,8 @@ export type GetMealDetailsInput = z.infer<typeof GetMealDetailsSchema>;
 export const GetOrderHistorySchema = z.object({
   from: z.string().regex(datePattern, "Date must be YYYY-MM-DD format").describe("Start date (inclusive) for invoice range, e.g. '2025-01-01'"),
   to: z.string().regex(datePattern, "Date must be YYYY-MM-DD format").describe("End date (inclusive) for invoice range, e.g. '2025-12-31'"),
-  limit: z.number().int().min(1).max(50).default(10).describe("Number of invoices to return (max 50)"),
-  offset: z.number().int().min(0).default(0).describe("Pagination offset"),
+  limit: z.coerce.number().int().min(1).max(50).default(10).describe("Number of invoices to return (max 50)"),
+  offset: z.coerce.number().int().min(0).default(0).describe("Pagination offset"),
   response_format: ResponseFormatSchema,
 }).strict();
 

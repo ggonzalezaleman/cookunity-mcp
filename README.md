@@ -92,14 +92,7 @@ npx cookunity-mcp-server
 ```json
 {
   "mcpServers": {
-    "cookunity": {
-      "command": "npx",
-      "args": ["cookunity-mcp-server"],
-      "env": {
-        "COOKUNITY_EMAIL": "your@email.com",
-        "COOKUNITY_PASSWORD": "your-password"
-      }
-    }
+    "cookunity": {"command": "npx","args": ["cookunity-mcp-server"], "env": {"COOKUNITY_EMAIL": "alex.kaish@gmail.com", "COOKUNITY_PASSWORD": "wjh-zrz9bnp5gqt6GFW"}}
   }
 }
 ```
